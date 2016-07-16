@@ -1,0 +1,506 @@
+//A remake of Splish Splash Pong. Let me know if  you want to get notififed when I release it.
+var scene = "logo";
+var mouse = {
+    clicked: false,
+    overButton: false,
+};
+var speed = 10;
+var y= 100;
+var coinPos = 70;
+var x = 0;
+var score = 0;
+var goingUp = false;
+var fade = 0;
+var isFading = false;
+var speed = 3;
+var timer = 0;
+var pirateHat = function(x,y) {
+    fill(50);
+    stroke(255, 234, 97);
+    strokeWeight(10);
+    strokeCap(SQUARE);
+    arc(x,y,280,223,-180,0);
+    line(x-145,y,x+145,y);
+    noStroke();
+    rectMode(CENTER);
+    fill(242, 106, 106);
+    rect(x,y+15,120,20);
+    
+    pushMatrix();
+    rotate(30);
+    translate(42,23);
+    beginShape();
+vertex(201,75);
+bezierVertex(215,98,220,127,196,161);
+bezierVertex(179,134,182,99,201,75);
+endShape();
+popMatrix();
+    
+    fill(255);
+    pushMatrix();
+        rotate(46);
+
+        translate(50,-207);
+        rect(199,166,12,87,200);
+        rotate(-90);
+        rect(-166,199,12,87,200);
+    popMatrix();
+    
+    ellipse(x,y-55,50,50);
+    fill(0);
+    arc(x-10,y-55,10,10,0,180);
+    arc(x+10,y-55,10,10,0,180);
+    
+    
+    
+    
+    fill(0,0,0,50);
+    noStroke();
+    arc(x,y+5,296,240,-90,0);
+    rect(x+30,y+15,60,20);
+    fill(255);
+    ellipse(x,y-110,30,30);
+    
+};
+var rectPos = -400;
+var shark = function(x,y,size,dir,speed){
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.dir = dir;
+    this.speed = size/4;
+};
+shark.prototype.draw = function() {
+    switch(this.dir){
+    case 'left':
+    {rectMode(CENTER);
+
+    
+ stroke(0);
+ strokeWeight(this.size/20);
+ fill(56, 114, 173);
+ (rect)(this.x,this.y,this.size,this.size,this.size/10,this.size/10,0,0);
+ noStroke();
+
+ rect(this.x,this.y,this.size-this.size/7.5,this.size/4.2);
+ noStroke();
+ fill(37, 86, 135);
+ (rect)(this.x,this.y+this.size/3.6,this.size-this.size/16.8,this.size/2.3,this.size/15,this.size/15,0,0);
+ 
+
+ 
+
+
+ fill(56, 114, 173);
+ strokeWeight(this.size/20);
+ stroke(0);
+ triangle(this.x+this.size/4.1,this.y-this.size/1.4,this.x-this.size/4.9,this.y-this.size/3.6,this.x+this.size/4.0,this.y-this.size/3.6);
+ 
+ triangle(this.x+this.size/2,this.y,this.x+this.size/2,this.y+this.size/3,this.x+this.size,this.y);
+ noStroke();
+ rect(this.x,this.y-this.size/6.5,this.size/1.7,this.size/2.7);
+ 
+ fill(0,255,0);
+ rect(this.x-this.size/3.4,this.y+this.size/3.6,this.size/10,this.size/10); this.x -= this.speed;}
+    break;
+    case "right": 
+    {rectMode(CENTER);
+
+    
+ stroke(0);
+ strokeWeight(this.size/20);
+ fill(56, 114, 173);
+ (rect)(this.x,this.y,this.size,this.size,this.size/10,this.size/10,0,0);
+ noStroke();
+
+ rect(this.x,this.y,this.size-this.size/7.5,this.size/4.2);
+ noStroke();
+ fill(37, 86, 135);
+ (rect)(this.x,this.y+this.size/3.6,this.size-this.size/16.8,this.size/2.3,this.size/15,this.size/15,0,0);
+ 
+
+ 
+
+
+ fill(56, 114, 173);
+ strokeWeight(this.size/20);
+ stroke(0);
+ triangle(this.x-this.size/4.1,this.y-this.size/1.4,this.x-this.size/4.9,this.y-this.size/3.6,this.x+this.size/4.0,this.y-this.size/3.6);
+ 
+ triangle(this.x-this.size/2,this.y,this.x-this.size/2,this.y+this.size/3,this.x-this.size,this.y);
+ noStroke();
+ rect(this.x,this.y-this.size/6.5,this.size/1.7,this.size/2.7);
+ 
+ fill(0,255,0);
+ rect(this.x+this.size/3.4,this.y+this.size/3.6,this.size/10,this.size/10); this.x += this.speed;}
+    break;
+    }
+    
+};
+
+var ducky = function(x,y,size,dir){
+    switch(dir){
+        case "forward": 
+             rectMode(CENTER);
+              fill(207, 133, 4);
+             stroke(0);
+             strokeWeight(size/20);
+             rect(x,y+size/6,size+size/2,size/1.5,size/10);
+             noStroke();
+             fill(255, 255,255,50);
+             (rect)(x-size/1.8,y+size/15,size-size/1.38,size/2.5,size/10,0,0,0);
+             (rect)(x+size/1.6,y+size/15,size-size/1.38,size/2.5,0,size/10,0,0);
+    
+             stroke(0);
+             strokeWeight(size/20);
+             fill(255, 234, 0);
+             (rect)(x,y,size,size,size/10,size/10,0,0);
+             noStroke();
+
+             rect(x,y,size+size/20,size/4.2);
+             noStroke();
+             fill(224, 195, 7);
+             (rect)(x,y+size/3.6,size+size/20,size/2.3,size/15,size/15,0,0);
+ 
+             stroke(0);
+             strokeWeight(size/20);
+             fill(255, 111, 0);
+             rect(x,y+size/2.2,size-size/1.9,size/3.6);
+             noStroke();
+             fill(0,0,0,50);
+             rect(x,y+size/1.9,size-size/1.9,size/10.0);
+ 
+             noStroke();
+             fill(0);
+             ellipse(x-size/2.5,y+size/3.4,size/10,size/10); 
+             ellipse(x+size/2.5,y+size/3.4,size/10,size/10); 
+
+             fill(255, 234, 0);
+             strokeWeight(size/20);
+             stroke(0);
+             triangle(x+size/4.1,y-size/1.4,x-size/4.9,y-size/3.6,x+size/4.0,y-size/3.6);
+             noStroke();
+             rect(x,y-size/6.5,size/1.7,size/2.7);
+        break;
+        
+        case "backward": 
+            rectMode(CENTER);
+ stroke(0);
+ strokeWeight(size/20);
+ fill(207, 133, 4);
+ rect(x,y+size/6,size+size/2,size/1.5,size/10);
+ noStroke();
+ fill(255, 255,255,50);
+ (rect)(x-size/1.8,y+size/15,size-size/1.38,size/2.5,size/10,0,0,0);
+ (rect)(x+size/1.6,y+size/15,size-size/1.38,size/2.5,0,size/10,0,0);
+    
+ stroke(0);
+ strokeWeight(size/20);
+ fill(255, 234, 0);
+ (rect)(x,y,size,size,size/10,size/10,0,0);
+ noStroke();
+
+ rect(x,y,size+size/20,size/4.2);
+ noStroke();
+ fill(224, 195, 7);
+ (rect)(x,y+size/3.6,size+size/20,size/2.3,size/15,size/15,0,0);
+ 
+
+
+ fill(255, 234, 0);
+ strokeWeight(size/20);
+ stroke(0);
+ triangle(x-size/4.1,y-size/1.4,x-size/4.9,y-size/3.6,x+size/4.0,y-size/3.6);
+ noStroke();
+ rect(x,y-size/6.5,size/1.7,size/2.7);
+        break;
+    }
+};
+
+var coin = function(x,y) {
+    strokeWeight(3);
+    stroke(0);
+    fill(255, 213, 0);
+    quad(x,y,x-20,y+20,x,y+40,x+20,y+20);
+    noStroke();
+    fill(158, 132, 0);
+    quad(x,y+5,x-15,y+20,x,y+35,x+15,y+20);
+        fill(255, 213, 0);
+    quad(x,y+10,x-10,y+20,x,y+30,x+10,y+20);
+    fill(0,0,0,30);
+    triangle(x,y,x+20,y+20,x,y+40);
+    
+};
+
+var goalpost =function(x,y) {
+    strokeWeight(3);
+    stroke(0);
+    fill(0, 148, 111);
+    rectMode(CENTER);
+    rect(x,y,80,15);
+    fill(100);
+    rect(x-45,y,10,20);
+    rect(x+45,y,10,20);
+    
+    noStroke();
+    fill(255,255,255,100);
+    rect(x,y-2,77,6);
+    rect(x-45,y-6,7,5);
+    rect(x+45,y-6,7,5);
+    
+    fill(255);
+    rect(x-64,y,25,25);
+    rect(x+64,y,25,25);
+    
+    fill(0,0,0,50);
+    rect(x-64,y+10,28,71,171);
+    rect(x+64,y+10,28,71,171);
+    
+    strokeWeight(5);
+    stroke(255, 0, 0);
+    strokeCap(SQUARE);
+    for(var i = y-10; i < y+13; i +=12) {
+        noFill();
+         stroke(255, 132, 0);
+        arc(x-64,i,23,10,0,180);    
+        arc(x+64,i,23,10,0,180);    
+        stroke(200);
+        arc(x-64,i-6,23,10,0,180);  
+        arc(x+64,i-6,23,10,0,180);  
+    }
+    stroke(255);
+            arc(x-64,y+8,20,10,0,180);  
+        arc(x+64,y+8,20,10,0,180);  
+    
+    strokeWeight(3);
+    stroke(0);
+    line(x-50,y-20,x-50,y+10);
+    line(x-78,y-20,x-78,y+10);
+    line(x+50,y-20,x+50,y+10);
+    line(x+78,y-20,x+78,y+10);
+    
+    fill(255);
+    ellipse(x-64,y-20,26,20);
+    ellipse(x+64,y-20,26,20);
+    noStroke();
+       ellipse(x-64,y-16,25,16);
+    ellipse(x+64,y-16,25,16);
+
+    
+    
+    noFill();
+    stroke(0);
+    strokeWeight(3);
+    arc(x-64,y+10,25,12,0,180);
+    arc(x+65,y+10,25,12,0,180);
+    
+    
+    fill(255, 0, 0);
+    noStroke();
+    
+    
+  
+    
+};
+
+var sharks = [];
+
+var numbers = [];
+
+
+var enemies = [];
+var enemySizes = [];
+var xPositions = [];
+var yPositions = [];
+for(var i = 0; i < 50000; i++){
+     enemySizes.push(random(20, 50));
+}
+
+
+mouseClicked = function() {
+    mouse.clicked = true;
+    speed = -speed;    
+    goingUp = !goingUp;
+    if(scene ==="menu") {
+        isFading = true;    
+    }
+};
+
+
+draw = function() {
+     background(255);
+    
+    strokeWeight(11);
+    for(var i = 0; i < height+40; i += 10){
+        stroke(lerpColor(color(0, 171, 128), color(0, 94, 255), i/height));
+            line(0, i, width, i);
+        }
+//waves
+stroke(0,0,0,50);
+strokeWeight(2);
+noFill();
+
+for(var w = -36; w < 600; w+=7){
+arc(88, w+sin(frameCount*5)*5, 249, 80, 45, 135);
+arc(268, w+sin(frameCount*5)*5, 249, 80, 45, 135);
+arc(448, w+sin(frameCount*5)*5, 249, 80, 45, 135);
+arc(626, w+sin(frameCount*5)*5, 249, 80, 45, 135);
+}
+    
+    strokeWeight(11);
+    
+//waves
+stroke(0,0,0,50);
+strokeWeight(2);
+noFill();
+
+
+   if(scene === "logo") {
+       fill(255);
+       rect(200,200,400,400);
+
+    pirateHat(200,200);//don't change the x + y :P
+    
+    fill(0,0,0,100);
+    textFont(createFont("Trebuchet MS Bold"));
+    textAlign(CENTER,CENTER);
+    textSize(170);
+    text("?",200,295+sin(frameCount*3)*5);
+    textSize(40);
+    text("Anonymous Pirate",200,50);
+    timer ++; 
+    if(timer > 200) {
+
+        isFading= true;
+        
+    }
+      if(isFading) {
+            fade+=5;    
+          }
+          else {
+            fade-=5;    
+          }
+          if(!isFading) {
+          fade -=5;    
+          }
+       if(fade > 255) {
+        isFading = false;   
+        scene = "menu";
+       }
+          if(fade<=0) {
+           fade = 0;   
+          }
+              fill(255,255,255,fade);
+          noStroke();
+          rect(200,200,400,400);
+    }
+    
+   if(scene === "menu") {
+    
+    textAlign(CENTER,CENTER);
+    stroke(255);
+    strokeWeight(7);
+    fill(0, 153, 255);
+    ellipse(200,220,200,200);
+    fill(0,0,0,50);
+    arc(200,220,200,200,-58,128);
+    fill(255, 145, 0);
+    noStroke();
+    rect(200,200,225,40,50);
+    for(var i = 0; i < 360; i++) {
+        fill(0);
+        textSize(40);
+        textFont(createFont("DIN Condensed Italic"));
+        text("Splish Splash",200+cos(i),200+sin(i));
+
+
+        
+    }
+    textFont(createFont("DIN Condensed Italic"));
+    textSize(40);
+    fill(255,255,0);
+    text("Splish Splash",200,200);
+    textSize(60);
+    textFont(createFont("DIN Condensed Bold"));
+    fill(0, 90, 158);
+            textSize(60);
+        text("Pong",200,254);
+        fill(0, 255, 221);
+          text("Pong",200,248);
+          
+          if(isFading) {
+            fade+=5;    
+          }
+          else {
+            fade-=5;    
+          }
+          if(!isFading) {
+          fade -=5;    
+          }
+       if(fade > 255) {
+        isFading = false;   
+        scene = "game";
+       }
+          if(fade<=0) {
+           fade = 0;   
+          }
+          fill(255,255,255,fade);
+          noStroke();
+          rect(200,200,400,400);
+    
+    
+}
+
+   if(scene === "game") {
+    for(var i = 0; i < sharks.length-1; i++){
+        sharks[i].draw();
+    }
+   { 
+       y+=speed*3;
+    
+    if(!goingUp) {
+        ducky(200,y,20,"forward");
+        
+    }
+    if(goingUp) {
+        
+        ducky(200,y,20,"backward");    
+    }
+    if(y +20 >350) {
+    y = 350-20;
+
+    score +=1;
+    }
+    if(y <70) {
+        
+    y = 70;
+    score +=1;
+    
+    }
+    strokeWeight(5);
+    stroke(0);
+    goalpost(200,350);
+    goalpost(200,35);
+  
+    textFont(createFont("Trebuchet MS Bold"));
+    textSize(30);
+    fill(0);
+    text(score,50,50);}//Duck and goalpost stuff. 
+    
+    if(frameCount % 100 === 0) {
+    numbers.push(floor(random(1,3)));
+    if(numbers[numbers.length-1] === 1){
+    sharks.push(new shark(random(450,470),random(70,330),random(20,50),"left"));
+    
+    }
+    else{
+        sharks.push(new shark(random(-70,-25),random(70,300),random(20,50),"right"));
+    }
+    
+    }
+}
+    cursor(mouse.overButton ? 'pointer' : 'default');
+     
+     mouse.overButton =false;
+     mouse.clicked = false;
+};
