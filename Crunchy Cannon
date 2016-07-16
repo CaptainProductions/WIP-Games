@@ -1,0 +1,405 @@
+//How do I spawn enemies that move toward the center (where you are) ? How can I make a set number of enemies that spawn per wave and after each wave is done, new enemies come? 
+
+//See help request
+
+
+
+var scene = "menu";
+
+
+var enemySpawnRate = 10;
+
+var hp = 5;
+
+var score = 0;
+
+
+var bg = function() {
+    background(209, 150, 0);
+    fill(0,0,0,50);
+    noStroke();
+    quad(0,0,300,0,352,600,0,600);
+    quad(0,0,143,0,74,600,0,600);
+    
+};
+
+var coolFont = function(x, y, size, txt, fonty, fill1, fill2) {
+    textFont(createFont(fonty));
+    textSize(size);
+    textAlign(CENTER, CENTER);
+    textSize(size);
+    for (var j = 0; j < 360; j += 40) {
+        fill(fill2);
+        text(txt, x + sin(j) * 4, y + cos(j) * 6);
+    }
+    fill(fill1);
+    text(txt, x, y);
+};
+
+var cookie = function(x,y,size) {
+    
+    noStroke();
+    fill(255, 183, 0);
+    ellipse(x,y,size,size);
+    fill(0);
+    ellipse(x-1/6*size,y-1/6*size,size/4,size/4);
+    ellipse(x+1/4*size,y-1/4*size,size/6,size/6);
+    ellipse(x+1/5*size,y+1/3.5*size,size/10,size/10);//I used a fraction w/ a decimal :O
+    ellipse(x-1/3*size,y+1/6*size,size/10,size/10);
+    fill(0,0,0,50);
+    arc(x,y,size,size,61,241);
+    
+};
+
+var heart = function(x,y) {
+    pushMatrix();
+    translate(x,y);
+  beginShape();
+  fill(200,0,0);
+vertex(197,204);
+bezierVertex(212,177,237,200,197,233);
+bezierVertex(197,225,198,214,197,204);
+
+endShape();  
+beginShape();
+fill(255, 0, 0);
+vertex(197,204);
+bezierVertex(174,176,167,210,197,233);
+bezierVertex(197,225,198,214,197,204);
+endShape();
+
+
+
+popMatrix();
+};
+var enemy = function(x,y) {
+    noStroke();
+    fill(50);
+    ellipse(x,y,50,50);
+    fill(255);
+    arc(x,y+7,47,36,0,180);
+    fill(50);
+    ellipse(x,y+5,48,19);
+    stroke(50);
+    strokeWeight(3);
+    line(x,y+16,x,y+24);
+    line(x-10,y+15,x-10,y+23);
+    line(x+10,y+15,x+10,y+22);
+    line(x+17,y+12,x+17,y+18);
+    line(x-17,y+12,x-17,y+18);
+    noStroke();
+    fill(255, 0, 0);
+    arc(x-10,y,10,9,0,180);
+    arc(x+10,y,10,9,0,180);
+    
+    fill(0,0,0,50);
+    arc(x,y,50,50,66,244);
+    
+};
+
+var play = function(x,y) {
+        noStroke();
+    fill(255, 183, 0);
+    ellipse(x,y,100,100);
+    if(dist(x,y,mouseX,mouseY) < 50) {
+        fill(0,0,0,30);
+        arc(x,y,100,100,270,450); 
+    }else {
+        fill(0,0,0,30);
+        arc(x,y,100,100,90,270);    
+    }
+    
+        if(mouseIsPressed && dist(x,y,mouseX,mouseY) < 50) {
+        scene = "game";    
+    }
+    
+    fill(255);
+    textSize(30);
+    text("Play",x,y);
+  
+
+    
+};
+
+var how = function(x,y) {
+    noStroke();
+    fill(255, 183, 0);
+    ellipse(x,y,100,100);
+    if(dist(x,y,mouseX,mouseY) < 50) {
+        fill(0,0,0,30);
+        arc(x,y,100,100,270,450); 
+    }else {
+        fill(0,0,0,30);
+        arc(x,y,100,100,90,270);    
+    }
+    
+    if(mouseIsPressed && dist(x,y,mouseX,mouseY) < 50) {
+        scene = "how";    
+    }
+    
+    fill(255);
+    textSize(30);
+    text("How",x,y);
+
+  
+
+    
+};
+
+var back = function(x,y) {
+    noStroke();
+    fill(255, 183, 0);
+    ellipse(x,y,100,100);
+    if(dist(x,y,mouseX,mouseY) < 50) {
+        fill(0,0,0,30);
+        arc(x,y,100,100,270,450); 
+    }else {
+        fill(0,0,0,30);
+        arc(x,y,100,100,90,270);    
+    }
+    
+    if(mouseIsPressed && dist(x,y,mouseX,mouseY) < 50) {
+        scene = "menu";    
+    }
+    
+    fill(255);
+    textSize(30);
+    text("Back",x,y);
+    
+};
+
+
+
+var Bullet = function(position, velocity, rotate) {
+        this.position = position;
+    this.velocity = velocity;
+    this.rotate = rotate;
+    this.r = [floor(random(0, 100)), floor(random(0, 100)), floor(random(0, 100))];
+    this.t = 100;
+};
+Bullet.prototype.draw = function() {
+    pushMatrix();
+    translate(this.position.x, this.position.y);
+    rotate(this.rotate);
+    
+    for (var i in this.r) {
+    cookie(0,0,15);
+    }
+    
+    popMatrix();
+};
+Bullet.prototype.update = function() {
+    this.position.add(this.velocity);
+    this.t--;
+};
+Bullet.prototype.isDead = function() {
+    return this.t < -100;
+};
+
+var bullets = [];
+
+var Heart = function(position, width, height, speed) {
+    this.position = position;
+    this.width = width;
+    this.height = height;
+    this.speed = speed;
+};
+Heart.prototype.draw = function() {
+    heart(this.position.x,this.position.y);
+};
+Heart.prototype.update = function() {
+    this.position.y+=this.speed;
+};
+Heart.prototype.isDead = function() {
+    if (this.position.y-this.width/2 > 600) {
+        return true;
+    }
+};
+
+var hearts = [];
+
+var keys = [];
+
+var Player = function() {
+    this.position = new PVector(300, 300);
+    this.velocity = new PVector(0, 5);
+    this.width = 40;
+    this.height = 40;
+    this.fireRate = 20;
+    
+    this.reloaded = true;
+};
+Player.prototype.draw = function() {
+    noStroke();
+    pushMatrix();
+    translate(this.position.x, this.position.y);
+    var a = atan2(mouseY-this.position.y, mouseX-this.position.x)+90;
+    rotate(a);
+    rectMode(CENTER);       
+    noStroke();
+    fill(255, 183, 0);
+    ellipse(0,0,50,50);
+    fill(0,0,0,30);
+    arc(0,0,50,50,270,450); 
+    fill(135, 97, 3);
+    rect(0,-20,24,45,3);
+    popMatrix();
+    
+    //this.velocity.rotate(a);
+    if (mouseX !== pmouseX && mouseY !== pmouseY) {
+        this.velocity.rotate(a);
+    }
+
+};//All physics-y and shooty stuff releated to the turret, Credit to stargazer ( except the turret and bullet graphics
+Player.prototype.shoot = function() {
+    var a = atan2(mouseY-this.position.y, mouseX-this.position.x)+90;
+    if (this.reloaded && mouseIsPressed) {
+        bullets.push(new Bullet(new PVector(this.position.x, this.position.y), new PVector((mouseX-this.position.x)/25, (mouseY-this.position.y)/25), a));
+        this.reloaded = false;
+        this.fireRate = 20;
+    } else if (this.fireRate < 0) {
+        this.reloaded = true;
+    }
+    
+    this.fireRate--;
+    
+};
+
+
+var Hostile = function(position, speed) {
+    this.position = position;
+    this.speed = speed;
+};
+Hostile.prototype.draw = function() {
+     enemy(this.position.x,this.position.y);
+};
+Hostile.prototype.update = function() {//How can I make the enemies move toward the center?
+    this.position.y+=this.speed;
+};
+Hostile.prototype.isDead = function() {
+    if (this.position.y-this.width/2 > 600) {
+        return true;
+    }
+};
+
+var Explosion = function(position) {
+    this.position = position;
+    this.Particle = function(position, rotate) {
+        this.position = position;
+        this.velocity = new PVector(0, 5);
+        this.rotate = rotate;
+        this.velocity.rotate(this.rotate);
+
+        this.r = [floor(random(0, 15)), floor(random(0, 15)), floor(random(0, 15))];
+        this.timeToLive = 20;
+    };
+    this.Particle.prototype.draw = function() {
+        pushMatrix();
+        translate(this.position.x, this.position.y);
+        rotate(this.rotate);
+        
+        for (var i in this.r) {
+           cookie(0,0,10);
+        }
+        
+        popMatrix();
+    };
+    this.Particle.prototype.update = function() {
+        this.position.add(this.velocity);
+        this.timeToLive--;
+    };
+    this.Particle.prototype.isDead = function() {
+        return this.timeToLive < 0;
+    };
+    this.particles = [];
+    this.done = false;
+    this.idk = true;
+};
+
+Explosion.prototype.init = function() {
+    if (this.idk) {
+        for (var i = 0 ; i < 6 ; i++) {
+            this.particles.push(new this.Particle(new PVector(this.position.x, this.position.y), i*30));
+        }
+        this.idk = false;
+    }
+    for (var i in this.particles) {
+        this.particles[i].draw();
+        this.particles[i].update();
+        if (this.particles[i].isDead()) {
+            this.particles.splice(i, 1);
+            this.done = true;
+        }
+    }
+};
+
+Explosion.prototype.isDone = function() {
+    return this.done === true;
+};
+
+var explosions = [];
+
+var hostiles = [];
+
+var jimmy = new Player();
+var h = new Heart();
+var fade = 255;
+
+draw = function() {
+    bg(); 
+    if(scene === "menu") {
+fade = 255;
+        coolFont(337,185,67,"runchy     annon","Avenir",color(255, 255, 255),color(255,255,255,50));
+        cookie(60,180,75+sin(frameCount*3)*3);
+        pushMatrix();
+        scale(1.5);
+        enemy(231,123);
+        popMatrix();
+        play(300,360);
+        how(300,500);
+        
+
+        
+    }
+    if(scene === "how") {
+
+    back(500,500);    
+    fill(255);
+    text("Shoot the         down.\n Collect       to gain an extra life.",300,300);
+    heart(20,110);
+    enemy(325,275);
+    fill(255,255,255,fade);
+    rectMode(CENTER);
+    rect(300,300,width,height);
+    fade -=3;
+    }
+    if(scene === "game") {
+        back(500,500);  
+        
+        
+        for (var i in bullets) {
+        bullets[i].draw();
+        bullets[i].update();
+        if (bullets[i].isDead()) {
+            bullets.splice(i, 1);
+        }
+    }
+    jimmy.draw();
+    jimmy.shoot();
+    
+    for(var i = 0; i < hp; i++) {
+        heart(-162+i*54,-176);    
+    }
+    
+    
+ 
+ 
+    rectMode(CENTER);
+    fill(255,255,255,fade);
+    rect(300,300,width,height);
+    fade-=3;
+    
+    }
+};
+
+
