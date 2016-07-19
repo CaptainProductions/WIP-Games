@@ -136,9 +136,12 @@ shark.prototype.draw = function() {
     break;
     }
     
+    
 };
 
-var ducky = function(x,y,size,dir){
+var dir;
+var ducky = function(x,y,size,wh){
+    if(this.x > -10 && this.x < 410){
     switch(dir){
         case "forward": 
              rectMode(CENTER);
@@ -215,20 +218,21 @@ var ducky = function(x,y,size,dir){
  rect(x,y-size/6.5,size/1.7,size/2.7);
         break;
     }
-};
-
-var coin = function(x,y) {
-    strokeWeight(3);
-    stroke(0);
-    fill(255, 213, 0);
-    quad(x,y,x-20,y+20,x,y+40,x+20,y+20);
-    noStroke();
-    fill(158, 132, 0);
-    quad(x,y+5,x-15,y+20,x,y+35,x+15,y+20);
-        fill(255, 213, 0);
-    quad(x,y+10,x-10,y+20,x,y+30,x+10,y+20);
-    fill(0,0,0,30);
-    triangle(x,y,x+20,y+20,x,y+40);
+    switch(wh){
+        case "up":
+            dir = "backward";
+           
+        break;
+        case "down":
+            dir = "forward";
+            
+        break;
+        
+    }}
+    else{
+        
+    }
+    
     
 };
 
@@ -312,21 +316,29 @@ var enemies = [];
 var enemySizes = [];
 var xPositions = [];
 var yPositions = [];
-for(var i = 0; i < 50000; i++){
-     enemySizes.push(random(20, 50));
-}
 
 
+var change = false;
 mouseClicked = function() {
     mouse.clicked = true;
     speed = -speed;    
     goingUp = !goingUp;
+   
     if(scene ==="menu") {
         isFading = true;    
     }
 };
-
-
+var coiny = 1;
+var coin = function(x){
+    if(coiny === 1){
+        x = 100;
+    }
+    else if(coiny === 2){
+        x = 300;
+    }
+    ellipse(200,coiny,20,20);
+};
+var duckstate = "up";
 draw = function() {
      background(255);
     
@@ -341,18 +353,11 @@ strokeWeight(2);
 noFill();
 
 for(var w = -36; w < 600; w+=7){
-arc(88, w+sin(frameCount*5)*5, 249, 80, 45, 135);
-arc(268, w+sin(frameCount*5)*5, 249, 80, 45, 135);
-arc(448, w+sin(frameCount*5)*5, 249, 80, 45, 135);
-arc(626, w+sin(frameCount*5)*5, 249, 80, 45, 135);
+    for(var b = 0; b <600; b+=112) {
+arc(b, w+sin(frameCount*5)*5, 158, 80, 45, 135);
+
 }
-    
-    strokeWeight(11);
-    
-//waves
-stroke(0,0,0,50);
-strokeWeight(2);
-noFill();
+}
 
 
    if(scene === "logo") {
@@ -369,7 +374,7 @@ noFill();
     textSize(40);
     text("Anonymous Pirate",200,50);
     timer ++; 
-    if(timer > 200) {
+    if(timer > 300) {
 
         isFading= true;
         
@@ -452,31 +457,51 @@ noFill();
 }
 
    if(scene === "game") {
+       coin();
     for(var i = 0; i < sharks.length-1; i++){
         sharks[i].draw();
     }
-   { 
-       y+=speed*3;
+   { y+=speed;
     
     if(!goingUp) {
-        ducky(200,y,20,"forward");
+        duckstate = "down";
         
+        if(y > 400 - 68){
+        ducky(200,y,20,"backward");
+        }
+        else{
+            ducky(200,y,20,"forward");
+        }
     }
     if(goingUp) {
-        
-        ducky(200,y,20,"backward");    
+        if(i){}
+        duckstate = "up";
+        if(y < 68){
+            ducky(200,y,20,"forward");
+        }
+        else{
+        ducky(200,y,20,"backward");    }
     }
     if(y +20 >350) {
-    y = 350-20;
 
+    speed = -speed;
+    duckstate = 'up';
     score +=1;
-    }
-    if(y <70) {
-        
-    y = 70;
-    score +=1;
+    goingUp = true;
+    
     
     }
+    if(y <=60) {
+        
+
+    duckstate = 'down';
+    speed = -speed;
+    score +=1;
+    goingUp = false;
+    
+    }
+    
+    ducky(200,y,20,duckstate);
     strokeWeight(5);
     stroke(0);
     goalpost(200,350);
@@ -487,14 +512,14 @@ noFill();
     fill(0);
     text(score,50,50);}//Duck and goalpost stuff. 
     
-    if(frameCount % 100 === 0) {
+    if(frameCount % 25 === 0) {
     numbers.push(floor(random(1,3)));
     if(numbers[numbers.length-1] === 1){
-    sharks.push(new shark(random(450,470),random(70,330),random(20,50),"left"));
+    sharks.push(new shark(random(490,525),random(125,300),random(15,25),"left"));
     
     }
     else{
-        sharks.push(new shark(random(-70,-25),random(70,300),random(20,50),"right"));
+        sharks.push(new shark(random(-125,-25),random(125,300),random(15,25),"right"));
     }
     
     }
